@@ -1,6 +1,7 @@
 package com.bridgelabz.employeewage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 interface IEmployeeWageComputation {
     public void addCompany(String companyName, int wagePerHr, int maxWorkingDays, int maxWorkingHrs);
@@ -46,14 +47,17 @@ class EmployeeWageBuilder implements IEmployeeWageComputation {
     public static final int FULL_TIME = 2;
     // instance variables
     ArrayList<CompanyEmpWage> companies;
+    HashMap<String, Integer> totalEmpWages;
 
     public EmployeeWageBuilder() {
         companies = new ArrayList<>();
+        totalEmpWages = new HashMap<>();
     }
 
     public void addCompany(String companyName, int wagePerHr, int maxWorkingDays, int maxWorkingHrs) {
         CompanyEmpWage company = new CompanyEmpWage(companyName, wagePerHr, maxWorkingDays, maxWorkingHrs);
         companies.add(company);
+        totalEmpWages.put(companyName, 0);
     }
 
     int generateEmployeeType() {
@@ -93,15 +97,24 @@ class EmployeeWageBuilder implements IEmployeeWageComputation {
             totalWage += wage;
             System.out.printf("%5d       %5d      %5d      %5d\n", day, workingHrs, wage, totalWorkingHrs + workingHrs);
         }
+        totalEmpWages.put(companyEmpWage.COMPANY_NAME, totalWage);
         return totalWage;
+    }
+
+    void printTotalEmpWages() {
+        System.out.println("The Companies and their total Employee Wages are:");
+        for (String companyName : totalEmpWages.keySet()) {
+            System.out.println(companyName + ": " + totalEmpWages.get(companyName));
+        }
+
     }
 
     public static void main(String args[]) {
         EmployeeWageBuilder employeeWageComputation = new EmployeeWageBuilder();
         employeeWageComputation.addCompany("Microsoft", 4, 30, 100);
         employeeWageComputation.addCompany("Google", 5, 40, 170);
-        employeeWageComputation.addCompany("Apple", 9, 10, 70);
         employeeWageComputation.addCompany("Amazon", 19, 10, 150);
         employeeWageComputation.calculateTotalWage();
+        employeeWageComputation.printTotalEmpWages();
     }
 }
